@@ -5,6 +5,8 @@ import java.util.Scanner;
 public class BMI {
 	static int userInputStart = 0;
 	static String tempContainer = "";
+	static String userName;
+	static String userAge;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -25,23 +27,31 @@ public class BMI {
 				.println("\nLet’s get started on your health journey! Enter '1' to start or '2' for end the session\n");
 		System.out.println(sign(4, "*", 50));
 		Scanner input = new Scanner(System.in);
+
 		while (userInputStart == 0 || userInputStart == 2) {
-			String userStart = input.nextLine();
-			System.out.println(filter(userStart, "1 2".split(" "), 1, ""));
+			tempContainer = input.nextLine();
+			System.out.println(filter(tempContainer, "1 2".split(" "), 1, "", ""));
 		}
 		userInputStart = 0;
 
 		while (userInputStart == 0 || userInputStart == 2) {
 			System.out.print("Enter Your Name: ");
-			String userName = input.nextLine();
-			System.out.println(filter(userName, "".split(" "), 3, "name"));
+			tempContainer = input.nextLine();
+			userName = filter(tempContainer, "".split(" "), 3, "name", "[a-zA-Z ]+");
+			System.out.println(userName);
 		}
+		System.out.println(progressBar(6));
 		userInputStart = 0;
+
 		while (userInputStart == 0 || userInputStart == 2) {
 			System.out.print("Enter Your Age: ");
-			String userAge = input.nextLine();
+			tempContainer = input.nextLine();
+			userAge = filter(tempContainer, "".split(" "), 1, "age", "^(?:[1-7][0-9]|80)$");
+			System.out.println(userInputStart == 1 ? "Hi" + userAge : userAge);
 		}
+		System.out.println(progressBar(8));
 
+		// For age do a other way session to user exit, if below age
 		/*
 		 * Scanner userWeight = new Scanner (System.in); System.out.println("Hello");
 		 * int weight = userWeight.nextInt(); System.out.println(weight);
@@ -61,10 +71,11 @@ public class BMI {
 
 	}
 
-	public static String filter(String letter, String[] condition, int minLength, String category) {
+	public static String filter(String letter, String[] condition, int minLength, String category, String regex) {
 		String updatedLetter = letter;
 		String updatedCondition = "";
 		String finalOutput = "";
+		String[] replacementLetters = {};
 		if (letter.isEmpty()) {
 			return "Please enter a valid number";
 		} else {
@@ -73,25 +84,52 @@ public class BMI {
 
 			if (!(category == null)) {
 
-				if (category.equals("name")) {
+				if (category.equals("name") || category.equals("age")) {
 
 					if (updatedLetter.length() >= minLength) {
 
-						char firstLetter = updatedLetter.charAt(0);
+						if (updatedLetter.matches(regex)) {
 
-						if (!Character.isUpperCase(firstLetter)) {
+							switch (category) {
 
-							String firstLetterUpdated = Character.toString(firstLetter);
-							firstLetterUpdated = firstLetterUpdated.toUpperCase();
-							updatedLetter = updatedLetter.replaceFirst(Character.toString(firstLetter),
-									firstLetterUpdated);
+							case "name":
 
+								char firstLetter = updatedLetter.charAt(0);
+
+								if (!Character.isUpperCase(firstLetter)) {
+
+									String firstLetterUpdated = Character.toString(firstLetter);
+									firstLetterUpdated = firstLetterUpdated.toUpperCase();
+									updatedLetter = updatedLetter.replaceFirst(Character.toString(firstLetter),
+											firstLetterUpdated);
+
+								}
+
+								break;
+
+							case "age":
+
+							default:
+
+							}
+
+							userInputStart = 1;
+
+							return updatedLetter;
+
+						} else {
+
+							// return "Please enter a name without numbers or other special characters !";
+							replacementLetters = new String[] { "Please enter a name", "without number or other special character !", "Our system only supports ages within this range only :","10 to 80 but your age is " + letter };
+
+							return switchStatement("_ _",replacementLetters, category);
 						}
-						userInputStart = 1;
-						return tempContainer = updatedLetter;
 
 					} else {
-						return "Please type a name with minimum length 3 letters";
+
+						replacementLetters = new String[] { "name", "3", "letters", "your age", "2" ,"digits" };
+
+						return category == "age" ? "Sorry, our system only supports ages within the range of 10 to 80. However, your age is " + letter : switchStatement("Please type _ with a minimum length _ _",replacementLetters, category);
 					}
 
 					// String[] letter_array = updatedLetter.split(",");
@@ -122,7 +160,6 @@ public class BMI {
 					for (int i = 0; i < condition.length; i++) {
 
 						if (updatedLetter.startsWith(condition[i])) {
-
 							if (i == (condition.length - 1)) {
 
 								if (updatedLetter.equals(condition[i])) {
@@ -185,4 +222,66 @@ public class BMI {
 		return openBar + progress + closeBar;
 
 	}
+
+	public static String switchStatement(String statement, String[] replacementWord, String category) {
+
+		String updatedStatement = statement;
+		int fieldCount = 0;
+		byte tempNumber = 0;
+		char[] statementInChar;
+
+		statementInChar = statement.toCharArray();
+
+		for (int i = 0; i < statementInChar.length; i++) {
+
+			if (statementInChar[i] == '_') {
+
+				fieldCount++;
+
+			}
+
+		}
+
+		switch (category) {
+
+		case "name":
+
+			for (int i = 0; i < (fieldCount); i++) {
+
+				updatedStatement = updatedStatement.replaceFirst("_", replacementWord[i]);
+
+			}
+
+			break;
+
+		case "age":
+
+			for (int i = fieldCount; i < (fieldCount + fieldCount); i++) {
+
+				updatedStatement = updatedStatement.replaceFirst("_", replacementWord[i]);
+
+			}
+
+			break;
+
+		case "test":
+
+			for (int i = (fieldCount + fieldCount); i < (fieldCount + fieldCount + fieldCount); i++) {
+
+				updatedStatement = updatedStatement.replaceFirst("_", replacementWord[i]);
+
+			}
+
+			break;
+
+		default:
+
+			break;
+
+		}
+
+		return updatedStatement;
+
+	}
+
 }
