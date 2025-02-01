@@ -2,11 +2,14 @@ package bmi;
 
 import java.util.Scanner;
 
+
 public class BMI {
 	static int userInputStart = 0;
 	static String tempContainer = "";
 	static String userName;
 	static String userAge;
+	static String userGender;
+	static String userWeight;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -50,7 +53,27 @@ public class BMI {
 			System.out.println(userInputStart == 1 ? "Succesfully stored in memory ! " : userAge);
 		}
 		System.out.println(progressBar(8));
-
+		userInputStart = 0;
+		
+		while (userInputStart == 0 || userInputStart == 2) {
+			System.out.print("Enter Your Gender (Male or Female): ");
+			tempContainer = input.nextLine();
+			userGender = filter(tempContainer, "male female".split(" "), 3, "", "");
+			System.out.println(userInputStart == 1 ? "Succesfully stored in memory ! " : userGender);
+		}
+		System.out.println(progressBar(10));
+		userInputStart = 0;
+		
+		while (userInputStart == 0 || userInputStart == 2) {
+			System.out.print("Enter Your Weight (in KG / Kilogram): ");
+			tempContainer = input.nextLine();
+			userWeight = filter(tempContainer, "".split(" "), 2, "weight", "^(?:1[0-9]|[2-9][0-9]|1[0-4][0-9]|150)$");
+			System.out.println(userInputStart == 1 ? "Succesfully stored in memory ! " : userWeight);
+		}
+		System.out.println(progressBar(12));
+		userInputStart = 0;
+		
+		
 		// For age do a other way session to user exit, if below age
 		/*
 		 * Scanner userWeight = new Scanner (System.in); System.out.println("Hello");
@@ -83,7 +106,7 @@ public class BMI {
 
 			if (!(category == null)) {
 
-				if (category.equals("name") || category.equals("age")) {
+				if (category.equals("name") || category.equals("age") || category.equals("weight")) {
 
 					if (updatedLetter.length() >= minLength) {
 
@@ -109,6 +132,10 @@ public class BMI {
 							case "age":
 
 								break;
+								
+							case "weight":
+								
+								break;
 
 							default:
 
@@ -124,14 +151,17 @@ public class BMI {
 							replacementLetters = new String[] { "Please enter a name",
 									"without number or other special character !",
 									"Our system only supports ages within this range only :",
-									"10 to 80 but your age is " + letter };
+									"10 to 80 but your age is " + letter, 
+									"Our system only supports weight within this range only :", 
+									"10 to 150 but your weight is " + letter,
+									};
 
 							return switchStatement("_ _", replacementLetters, category);
 						}
 
 					} else {
 
-						replacementLetters = new String[] { "name", "3", "letters", "your age", "2", "digits" };
+						replacementLetters = new String[] { "name", "3", "letters", "your age", "2", "digits", "number", "2", "digits" };
 
 						return category == "age"
 								? "Sorry, our system only supports ages within the range of 10 to 80. However, your age is "
@@ -167,42 +197,46 @@ public class BMI {
 
 					for (int i = 0; i < condition.length; i++) {
 
-						if (updatedLetter.startsWith(condition[i])) {
+						if (updatedLetter.startsWith(Character.toString(condition[i].charAt(0)))) {
+							
+						
 							if (i == (condition.length - 1)) {
-
+						
 								if (updatedLetter.equals(condition[i])) {
-
+							
 									finalOutput = progressBar(4);
 									userInputStart = 1;
 									break;
 
 								} else {
-
+							
 									finalOutput = "Input not valid. Please Key in " + tempCondition;
 									userInputStart = 2;
 									break;
 								}
 
 							} else {
-
+							
 								if (updatedLetter.equals(condition[i])) {
-
+								
 									finalOutput = progressBar(4);
 									userInputStart = 1;
 									break;
 
 								} else {
-
+									
 									finalOutput = "Input not valid. Please Key in " + tempCondition;
 									break;
 
 								}
 							}
 						} else {
-
+							
+						
+							
 							finalOutput = "***Please Enter a valid input with a correct starting letter or number. Starting letter from user is "
 									+ boldText + "\033[0;0m \n" + "***but expected starting letter or number is: "
-									+ tempCondition + ". Don't Play with Me !!***";
+									+ tempCondition + "***";
 
 						}
 
@@ -245,7 +279,7 @@ public class BMI {
 		case "age":
 			startIndex = fieldCount;
 			break;
-		case "test":
+		case "weight":
 			startIndex = fieldCount * 2;
 			break;
 		default:
