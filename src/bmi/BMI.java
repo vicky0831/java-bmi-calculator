@@ -2,7 +2,6 @@ package bmi;
 
 import java.util.Scanner;
 
-
 public class BMI {
 	static int userInputStart = 0;
 	static String tempContainer = "";
@@ -10,6 +9,8 @@ public class BMI {
 	static String userAge;
 	static String userGender;
 	static String userWeight;
+	static String userHeight;
+
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -41,7 +42,8 @@ public class BMI {
 			System.out.print("Enter Your Name: ");
 			tempContainer = input.nextLine();
 			userName = filter(tempContainer, "".split(" "), 3, "name", "[a-zA-Z ]+");
-			System.out.println(userInputStart == 1 ? "Succesfully stored in memory ! " + "\nHello " + userName : userName);
+			System.out.println(
+					userInputStart == 1 ? "Succesfully stored in memory ! " + "\nHello " + userName : userName);
 		}
 		System.out.println(progressBar(6));
 		userInputStart = 0;
@@ -54,7 +56,7 @@ public class BMI {
 		}
 		System.out.println(progressBar(8));
 		userInputStart = 0;
-		
+
 		while (userInputStart == 0 || userInputStart == 2) {
 			System.out.print("Enter Your Gender (Male or Female): ");
 			tempContainer = input.nextLine();
@@ -63,17 +65,25 @@ public class BMI {
 		}
 		System.out.println(progressBar(10));
 		userInputStart = 0;
-		
+
 		while (userInputStart == 0 || userInputStart == 2) {
-			System.out.print("Enter Your Weight (in KG / Kilogram): ");
+			System.out.print("Enter Your Weight (in KG / Kilogram) Ex. 40, 65, 100: ");
 			tempContainer = input.nextLine();
 			userWeight = filter(tempContainer, "".split(" "), 2, "weight", "^(?:1[0-9]|[2-9][0-9]|1[0-4][0-9]|150)$");
 			System.out.println(userInputStart == 1 ? "Succesfully stored in memory ! " : userWeight);
 		}
 		System.out.println(progressBar(12));
 		userInputStart = 0;
-		
-		
+
+		while (userInputStart == 0 || userInputStart == 2) {
+			System.out.print("Enter Your Height (in centimeter) Ex. 80, 120, 165: ");
+			tempContainer = input.nextLine();
+			userHeight = filter(tempContainer, "".split(" "), 3, "height", "^(?:1[2-9][0-9]|2[0-2][0-9]|230)$");
+			System.out.println(userInputStart == 1 ? "Succesfully stored in memory ! " : userHeight);
+		}
+		System.out.println(progressBar(14));
+		userInputStart = 0;
+
 		// For age do a other way session to user exit, if below age
 		/*
 		 * Scanner userWeight = new Scanner (System.in); System.out.println("Hello");
@@ -106,7 +116,8 @@ public class BMI {
 
 			if (!(category == null)) {
 
-				if (category.equals("name") || category.equals("age") || category.equals("weight")) {
+				if (category.equals("name") || category.equals("age") || category.equals("weight")
+						|| category.equals("height")) {
 
 					if (updatedLetter.length() >= minLength) {
 
@@ -132,12 +143,14 @@ public class BMI {
 							case "age":
 
 								break;
-								
+
 							case "weight":
-								
+
 								break;
 
 							default:
+
+								break;
 
 							}
 
@@ -147,27 +160,38 @@ public class BMI {
 
 						} else {
 
+							if (category.equals("height")) {
+								return "Our system only supports weight within this range only : 125 to 230 but your height is "
+										+ letter;
+							}
+
 							// return "Please enter a name without numbers or other special characters !";
 							replacementLetters = new String[] { "Please enter a name",
 									"without number or other special character !",
 									"Our system only supports ages within this range only :",
-									"10 to 80 but your age is " + letter, 
-									"Our system only supports weight within this range only :", 
+									"10 to 80 but your age is " + letter,
+									"Our system only supports weight within this range only :",
 									"10 to 150 but your weight is " + letter,
-									};
+
+							};
 
 							return switchStatement("_ _", replacementLetters, category);
 						}
 
 					} else {
 
-						replacementLetters = new String[] { "name", "3", "letters", "your age", "2", "digits", "number", "2", "digits" };
+						replacementLetters = new String[] { "name", "3", "letters", "your age", "2", "digits", "number",
+								"2", "digits", };
 
 						return category == "age"
 								? "Sorry, our system only supports ages within the range of 10 to 80. However, your age is "
 										+ letter
-								: switchStatement("Please type _ with a minimum length _ _", replacementLetters,
-										category);
+								: (category == "height"
+										? "Sorry, our system only supports heights within the range of 125 to 230. However, your height is "
+												+ letter
+										: switchStatement("Please type _ with a minimum length _ _", replacementLetters,
+												category));
+
 					}
 
 					// String[] letter_array = updatedLetter.split(",");
@@ -198,42 +222,39 @@ public class BMI {
 					for (int i = 0; i < condition.length; i++) {
 
 						if (updatedLetter.startsWith(Character.toString(condition[i].charAt(0)))) {
-							
-						
+
 							if (i == (condition.length - 1)) {
-						
+
 								if (updatedLetter.equals(condition[i])) {
-							
+
 									finalOutput = progressBar(4);
 									userInputStart = 1;
 									break;
 
 								} else {
-							
+
 									finalOutput = "Input not valid. Please Key in " + tempCondition;
 									userInputStart = 2;
 									break;
 								}
 
 							} else {
-							
+
 								if (updatedLetter.equals(condition[i])) {
-								
+
 									finalOutput = progressBar(4);
 									userInputStart = 1;
 									break;
 
 								} else {
-									
+
 									finalOutput = "Input not valid. Please Key in " + tempCondition;
 									break;
 
 								}
 							}
 						} else {
-							
-						
-							
+
 							finalOutput = "***Please Enter a valid input with a correct starting letter or number. Starting letter from user is "
 									+ boldText + "\033[0;0m \n" + "***but expected starting letter or number is: "
 									+ tempCondition + "***";
@@ -297,4 +318,9 @@ public class BMI {
 		return updatedStatement;
 	}
 
+	public double BMI_calculation() {
+		
+		return 23.5;
+		
+		}
 }
