@@ -1,6 +1,7 @@
 package bmi;
 
 import java.util.Scanner;
+import java.lang.Math;
 
 public class BMI {
 	static int userInputStart = 0;
@@ -10,6 +11,7 @@ public class BMI {
 	static String userGender;
 	static String userWeight;
 	static String userHeight;
+	static double bmiResult;
 
 
 	public static void main(String[] args) {
@@ -45,7 +47,7 @@ public class BMI {
 			System.out.println(
 					userInputStart == 1 ? "Succesfully stored in memory ! " + "\nHello " + userName : userName);
 		}
-		System.out.println(progressBar(6));
+		System.out.println(progressBar(6,0));
 		userInputStart = 0;
 
 		while (userInputStart == 0 || userInputStart == 2) {
@@ -54,7 +56,7 @@ public class BMI {
 			userAge = filter(tempContainer, "".split(" "), 1, "age", "^(?:[1-7][0-9]|80)$");
 			System.out.println(userInputStart == 1 ? "Succesfully stored in memory ! " : userAge);
 		}
-		System.out.println(progressBar(8));
+		System.out.println(progressBar(8,0));
 		userInputStart = 0;
 
 		while (userInputStart == 0 || userInputStart == 2) {
@@ -63,27 +65,48 @@ public class BMI {
 			userGender = filter(tempContainer, "male female".split(" "), 3, "", "");
 			System.out.println(userInputStart == 1 ? "Succesfully stored in memory ! " : userGender);
 		}
-		System.out.println(progressBar(10));
+		System.out.println(progressBar(10,0));
 		userInputStart = 0;
 
 		while (userInputStart == 0 || userInputStart == 2) {
 			System.out.print("Enter Your Weight (in KG / Kilogram) Ex. 40, 65, 100: ");
 			tempContainer = input.nextLine();
-			userWeight = filter(tempContainer, "".split(" "), 2, "weight", "^(?:1[0-9]|[2-9][0-9]|1[0-4][0-9]|150)$");
+			userWeight = filter(tempContainer, "".split(" "), 2, "weight", "^(?:1[0-9]|[2-9][0-9]|1[0-4][0-9]|150)(\\.\\d+)?$");
 			System.out.println(userInputStart == 1 ? "Succesfully stored in memory ! " : userWeight);
 		}
-		System.out.println(progressBar(12));
+		System.out.println(progressBar(12,0));
 		userInputStart = 0;
 
 		while (userInputStart == 0 || userInputStart == 2) {
-			System.out.print("Enter Your Height (in centimeter) Ex. 80, 120, 165: ");
+			System.out.print("Enter Your Height (in centimeter) Ex. 120, 145.45, 165: ");
 			tempContainer = input.nextLine();
-			userHeight = filter(tempContainer, "".split(" "), 3, "height", "^(?:1[2-9][0-9]|2[0-2][0-9]|230)$");
+			userHeight = filter(tempContainer, "".split(" "), 3, "height", "^(?:1[2-9][0-9]|2[0-2][0-9]|230)(\\.\\d+)?$");
 			System.out.println(userInputStart == 1 ? "Succesfully stored in memory ! " : userHeight);
 		}
-		System.out.println(progressBar(14));
+		System.out.println(progressBar(14,0));
 		userInputStart = 0;
-
+		
+		System.out.println("Starting Calculation Process");
+		
+		
+		
+		byte num = 14;
+		try {
+			for(int i = 0; i < 4; i++) {
+				num+=7;
+		    Thread.sleep(2500);
+		    System.out.println(progressBar(num,0));
+			}
+		} catch (InterruptedException ie) {
+		    Thread.currentThread().interrupt();
+		
+		
+		}
+		
+		bmiResult = BMI_calculation();
+		
+		System.out.println("Your BMI is " + String.format("%.2f", bmiResult) + "** " + BMI_category());
+		System.out.println(progressBar(70,1));
 		// For age do a other way session to user exit, if below age
 		/*
 		 * Scanner userWeight = new Scanner (System.in); System.out.println("Hello");
@@ -227,7 +250,7 @@ public class BMI {
 
 								if (updatedLetter.equals(condition[i])) {
 
-									finalOutput = progressBar(4);
+									finalOutput = progressBar(4,0);
 									userInputStart = 1;
 									break;
 
@@ -242,7 +265,7 @@ public class BMI {
 
 								if (updatedLetter.equals(condition[i])) {
 
-									finalOutput = progressBar(4);
+									finalOutput = progressBar(4,0);
 									userInputStart = 1;
 									break;
 
@@ -276,11 +299,11 @@ public class BMI {
 		return finalOutput;
 	}
 
-	public static String progressBar(int iteration) {
+	public static String progressBar(int iteration, int final_iteration) {
 
 		String openBar = "[";
 		String progress = sign(0, "=", iteration);
-		String closeBar = "\t\t\t]";
+		String closeBar = final_iteration == 1 ? "]" : "\t\t\t]";
 
 		return openBar + progress + closeBar;
 
@@ -318,9 +341,32 @@ public class BMI {
 		return updatedStatement;
 	}
 
-	public double BMI_calculation() {
+	public static double BMI_calculation() {
 		
-		return 23.5;
+		float weight = Float.parseFloat(userWeight);
+		float height = (Float.parseFloat(userHeight) / 100);
+
+		return (weight / (Math.pow(height, 2)));
 		
 		}
+	
+	public static String BMI_category(){
+	
+			if(bmiResult < 18.5) {
+				tempContainer = "You’re too skinny! Let’s bulk up a bit—time for some healthy snacks!" + "\u001B[1m" + " Category - Underweight\u001B[0m";
+			} else if(bmiResult < 24.9) {
+				tempContainer = "You’re just right! Keep rocking that healthy balance!" + "\u001B[1m" + " Category - Normal Weight\u001B[0m";
+			} else if(bmiResult < 29.9) {
+				tempContainer = "Carrying a little extra love! Let’s find ways to move and groove more!" + "\u001B[1m" + " Category - Overweight\u001B[0m";
+			} else if(bmiResult < 34.9) {
+				tempContainer = "It’s time for a health reboot. Small steps can lead to big changes!" + "\u001B[1m" + " Category - Obese Class I\u001B[0m";
+			} else if(bmiResult < 39.9) {
+				tempContainer = "Health matters! Prioritizing fitness and nutrition can make a difference!" + "\u001B[1m" + " Category - Obese Class II\u001B[0m";
+			} else {
+				tempContainer = "Serious health risks ahead. Seeking guidance from a healthcare professional is crucial!" + "\u001B[1m" + " Category - Severe Obese Class III\u001B[0m";
+			}
+		
+		
+		return tempContainer;
+	}
 }
